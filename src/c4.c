@@ -10,6 +10,10 @@ PBL_APP_INFO(MY_UUID,
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
 
+/* use wc -l to come up with a reasonable value here */
+#define MAX_DEFS 147
+#define MAX_DEF_LENGTH 350
+
 Window window;
 
 TextLayer text_date_layer;
@@ -20,6 +24,55 @@ TextLayer c4def_layer;
 
 Layer line_layer;
 
+ResHandle c4handle;
+uint32_t def_index[MAX_DEFS+1];
+uint16_t total_defs;
+
+void build_index(void) {
+#define CHUNK_SIZE 1024
+    uint8_t data[CHUNK_SIZE];
+    // read the file in chunks
+    uint16_t i = 0;
+    uint32_t start = 0;
+    size_t read, j;
+    c4handle = resource_get_handle(RESOURCE_ID_C4DEFS);
+    while (1) {
+        read = resource_load_byte_range(c4handle, start, data,
+                                        CHUNK_SIZE);
+        if (read <= 0) { break; }
+        for (j=0; j<read; ) {
+            if (data[j++]=='\n') {
+                def_index[i++] = start + j;
+                if (i == (MAX_DEFS+1)) { goto no_more_chunks; }
+            }
+        }
+        start += read;
+    }
+    if (i>0 && def_index[i-1] != start) {
+        def_index[i++] = start;
+    }
+ no_more_chunks:
+    total_defs = (i-1);
+}
+
+void update_call(uint16_t which) {
+    static uint8_t data[MAX_DEF_LENGTH+1];
+    uint32_t start = def_index[which];
+    uint32_t end = def_index[which+1] - 1;
+    uint32_t size = end - start;
+    uint8_t *def, c;
+    if (size > MAX_DEF_LENGTH) { size = MAX_DEF_LENGTH; }
+    resource_load_byte_range(c4handle, start, data, size);
+    data[size] = 0;
+    /* look for end of call name */
+    for (def = data; ; def++) {
+        c = *def;
+        if (c==0 || c=='\t') { break; }
+    }
+    if (*def == '\t') { *def++ = 0; }
+    text_layer_set_text(&c4call_layer, (char*)data);
+    text_layer_set_text(&c4def_layer, (char*)def);
+}
 
 void line_layer_update_callback(Layer *me, GContext* ctx) {
   (void)me;
@@ -61,20 +114,21 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_14)));
   text_layer_set_text_alignment(&c4call_layer, GTextAlignmentCenter);
 
-  layer_set_frame(&c4def_layer.layer, GRect(0, 0, 144, 106));
+  layer_set_frame(&c4def_layer.layer, GRect(0, 16, 144, 106-16));
   text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_14)));
-
-  text_layer_set_text(&c4call_layer, "tag the star:");
-  text_layer_set_text(&c4def_layer, "\n"
-                      "1/2 reverse swap around, counter rotate the diamond N/4 (default 2), drop in (gives 1/2 tag)");
 
 
   layer_init(&line_layer, window.layer.frame);
   line_layer.update_proc = &line_layer_update_callback;
   layer_add_child(&window.layer, &line_layer);
 
+  // build index of definitions
+  build_index();
 
-  // TODO: Update display here to avoid blank display on launch?
+  text_layer_set_text(&c4call_layer, "tag the star:");
+  text_layer_set_text(&c4def_layer,
+                      "1/2 reverse swap around, counter rotate the diamond N/4 (default 2), drop in (gives 1/2 tag)");
+
 }
 
 
@@ -110,6 +164,7 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
   text_layer_set_text(&text_time_layer, time_text);
 
+  update_call(t->tick_time->tm_min % total_defs);
 }
 
 
