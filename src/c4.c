@@ -6,7 +6,7 @@
 #define MY_UUID { 0x22, 0xD3, 0x09, 0x29, 0x93, 0xBA, 0x42, 0xAE, 0xBB, 0xB1, 0x04, 0xD1, 0xB3, 0xAB, 0x1E, 0xEC }
 PBL_APP_INFO(MY_UUID,
              "C4", "cscott.net",
-             1, 0, /* App version */
+             1, 1, /* App version */
              RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
 
@@ -147,19 +147,19 @@ void handle_init(AppContextRef ctx) {
       layer_add_child(&window.layer, &(layers[i]->layer));
   }
   layer_set_frame(&text_date_layer.layer, GRect(0, 168-24, 144, 24));
-  text_layer_set_font(&text_date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
+  text_layer_set_font(&text_date_layer, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
   text_layer_set_text_alignment(&text_date_layer, GTextAlignmentCenter);
 
   layer_set_frame(&text_time_layer.layer, GRect(0, 99, 144, 168-99));
-  text_layer_set_font(&text_time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_SUBSET_49)));
+  text_layer_set_font(&text_time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
   text_layer_set_text_alignment(&text_time_layer, GTextAlignmentCenter);
 
   layer_set_frame(&c4call_layer.layer, GRect(0, 0, 144, 18));
-  text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_14)));
+  text_layer_set_font(&c4def_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
   text_layer_set_text_alignment(&c4call_layer, GTextAlignmentCenter);
 
   layer_set_frame(&c4def_layer.layer, GRect(0, 16, 144, 106-16));
-  text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_14)));
+  text_layer_set_font(&c4def_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 
 
   layer_init(&line_layer, window.layer.frame);
