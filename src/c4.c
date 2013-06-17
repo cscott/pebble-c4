@@ -23,8 +23,8 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 
   graphics_context_set_stroke_color(ctx, GColorWhite);
 
-  graphics_draw_line(ctx, GPoint(8, 97), GPoint(131, 97));
-  graphics_draw_line(ctx, GPoint(8, 98), GPoint(131, 98));
+  graphics_draw_line(ctx, GPoint(8, 97+9), GPoint(131, 97+9));
+  graphics_draw_line(ctx, GPoint(8, 98+9), GPoint(131, 98+9));
 
 }
 
@@ -42,7 +42,8 @@ void handle_init(AppContextRef ctx) {
   text_layer_init(&text_date_layer, window.layer.frame);
   text_layer_set_text_color(&text_date_layer, GColorWhite);
   text_layer_set_background_color(&text_date_layer, GColorClear);
-  layer_set_frame(&text_date_layer.layer, GRect(8, 68, 144-8, 168-68));
+  text_layer_set_text_alignment(&text_date_layer, GTextAlignmentCenter);
+  layer_set_frame(&text_date_layer.layer, GRect(0, 168-24, 144, 24));
   text_layer_set_font(&text_date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
   layer_add_child(&window.layer, &text_date_layer.layer);
 
@@ -50,7 +51,7 @@ void handle_init(AppContextRef ctx) {
   text_layer_init(&text_time_layer, window.layer.frame);
   text_layer_set_text_color(&text_time_layer, GColorWhite);
   text_layer_set_background_color(&text_time_layer, GColorClear);
-  layer_set_frame(&text_time_layer.layer, GRect(7, 92, 144-7, 168-92));
+  layer_set_frame(&text_time_layer.layer, GRect(7, 99, 144-7, 168-99));
   text_layer_set_font(&text_time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_SUBSET_49)));
   layer_add_child(&window.layer, &text_time_layer.layer);
 
