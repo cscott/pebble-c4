@@ -24,6 +24,43 @@ TextLayer c4def_layer;
 
 Layer line_layer;
 
+static uint16_t lfsr = 0xACE1u;
+void seed_random(void) {
+    PblTm time;
+    get_time(&time);
+    lfsr=(time.tm_sec + 60*(time.tm_min + 60*(time.tm_hour + 24*time.tm_mday)));
+    if (lfsr==0) { lfsr++; }
+}
+
+/* generate a uniform random number in the range [0,1] */
+unsigned short get_random_bit(void) {
+    /* 16-bit galois LFSR, period 65535. */
+    /* see http://en.wikipedia.org/wiki/Linear_feedback_shift_register */
+    /* taps: 16 14 13 11; feedback polynomial: x^16 + x^14 + x^13 + x^11 + 1 */
+    unsigned short out = lfsr & 1u;
+    lfsr = (lfsr >> 1) ^ (-(out) & 0xB400u);
+    return out;
+}
+/* generate a uniform random number in the range [0, 2^n) */
+uint16_t get_random_bits(unsigned short n) {
+    uint16_t out = 0;
+    while (n--) { out = (out << 1) | get_random_bit(); }
+    return out;
+}
+/* generate a uniform random number in the range [0, max) */
+uint16_t get_random_int(uint16_t max) {
+    uint16_t val;
+    uint16_t low;
+    low = 1024 % max;
+    do {
+        // this loop is necessary to ensure the numbers are uniformly
+        // distributed.
+        val = get_random_bits(10);
+    } while (val < low);
+    return val % max;
+}
+
+
 ResHandle c4handle;
 uint32_t def_index[MAX_DEFS+1];
 uint16_t current_def, total_defs;
@@ -55,7 +92,7 @@ void build_index(void) {
     }
  no_more_chunks:
     total_defs = (i-1);
-    current_def = 0;
+    current_def = get_random_int(total_defs);
 }
 
 void update_call(uint16_t which, unsigned short show_def) {
@@ -94,6 +131,8 @@ void handle_init(AppContextRef ctx) {
                            &c4call_layer, &c4def_layer };
   unsigned int i;
   (void)ctx;
+
+  seed_random();
 
   window_init(&window, "C4");
   window_stack_push(&window, true /* Animated */);
