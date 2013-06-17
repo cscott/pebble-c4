@@ -15,6 +15,8 @@ Window window;
 TextLayer text_date_layer;
 TextLayer text_time_layer;
 
+TextLayer c4def_layer;
+
 Layer line_layer;
 
 
@@ -54,6 +56,16 @@ void handle_init(AppContextRef ctx) {
   layer_set_frame(&text_time_layer.layer, GRect(7, 99, 144-7, 168-99));
   text_layer_set_font(&text_time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_SUBSET_49)));
   layer_add_child(&window.layer, &text_time_layer.layer);
+
+
+  text_layer_init(&c4def_layer, window.layer.frame);
+  text_layer_set_text_color(&c4def_layer, GColorWhite);
+  text_layer_set_background_color(&c4def_layer, GColorClear);
+  layer_set_frame(&c4def_layer.layer, GRect(0, 0, 144, 106));
+  text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_14)));
+  layer_add_child(&window.layer, &c4def_layer.layer);
+  text_layer_set_text(&c4def_layer, "tag the star:\n"
+                      "1/2 reverse swap around, counter rotate the diamond N/4 (default 2), drop in (gives 1/2 tag)");
 
 
   layer_init(&line_layer, window.layer.frame);
