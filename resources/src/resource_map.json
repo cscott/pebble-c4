@@ -10,6 +10,12 @@
 
         {
         "type": "font",
+        "defName": "FONT_ROBOTO_BOLD_14",
+        "file": "fonts/Roboto-Bold.ttf"
+        },
+
+        {
+        "type": "font",
         "defName": "FONT_ROBOTO_CONDENSED_14",
         "file": "fonts/Roboto-Condensed.ttf"
         },

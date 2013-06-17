@@ -15,6 +15,7 @@ Window window;
 TextLayer text_date_layer;
 TextLayer text_time_layer;
 
+TextLayer c4call_layer;
 TextLayer c4def_layer;
 
 Layer line_layer;
@@ -32,6 +33,9 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 
 
 void handle_init(AppContextRef ctx) {
+  TextLayer *layers[4] = { &text_date_layer, &text_time_layer,
+                           &c4call_layer, &c4def_layer };
+  unsigned int i;
   (void)ctx;
 
   window_init(&window, "C4");
@@ -40,31 +44,28 @@ void handle_init(AppContextRef ctx) {
 
   resource_init_current_app(&APP_RESOURCES);
 
-
-  text_layer_init(&text_date_layer, window.layer.frame);
-  text_layer_set_text_color(&text_date_layer, GColorWhite);
-  text_layer_set_background_color(&text_date_layer, GColorClear);
-  text_layer_set_text_alignment(&text_date_layer, GTextAlignmentCenter);
+  for (i=0; i<4; i++) {
+      text_layer_init(layers[i], window.layer.frame);
+      text_layer_set_text_color(layers[i], GColorWhite);
+      text_layer_set_background_color(layers[i], GColorClear);
+      layer_add_child(&window.layer, &(layers[i]->layer));
+  }
   layer_set_frame(&text_date_layer.layer, GRect(0, 168-24, 144, 24));
   text_layer_set_font(&text_date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
-  layer_add_child(&window.layer, &text_date_layer.layer);
+  text_layer_set_text_alignment(&text_date_layer, GTextAlignmentCenter);
 
-
-  text_layer_init(&text_time_layer, window.layer.frame);
-  text_layer_set_text_color(&text_time_layer, GColorWhite);
-  text_layer_set_background_color(&text_time_layer, GColorClear);
   layer_set_frame(&text_time_layer.layer, GRect(7, 99, 144-7, 168-99));
   text_layer_set_font(&text_time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_SUBSET_49)));
-  layer_add_child(&window.layer, &text_time_layer.layer);
 
+  layer_set_frame(&c4call_layer.layer, GRect(0, 0, 144, 18));
+  text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_14)));
+  text_layer_set_text_alignment(&c4call_layer, GTextAlignmentCenter);
 
-  text_layer_init(&c4def_layer, window.layer.frame);
-  text_layer_set_text_color(&c4def_layer, GColorWhite);
-  text_layer_set_background_color(&c4def_layer, GColorClear);
   layer_set_frame(&c4def_layer.layer, GRect(0, 0, 144, 106));
   text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_14)));
-  layer_add_child(&window.layer, &c4def_layer.layer);
-  text_layer_set_text(&c4def_layer, "tag the star:\n"
+
+  text_layer_set_text(&c4call_layer, "tag the star:");
+  text_layer_set_text(&c4def_layer, "\n"
                       "1/2 reverse swap around, counter rotate the diamond N/4 (default 2), drop in (gives 1/2 tag)");
 
 
