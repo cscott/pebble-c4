@@ -26,7 +26,8 @@ Layer line_layer;
 
 ResHandle c4handle;
 uint32_t def_index[MAX_DEFS+1];
-uint16_t total_defs;
+uint16_t current_def, total_defs;
+
 
 void build_index(void) {
 #define CHUNK_SIZE 1024
@@ -36,6 +37,7 @@ void build_index(void) {
     uint32_t start = 0;
     size_t read, j;
     c4handle = resource_get_handle(RESOURCE_ID_C4DEFS);
+    def_index[i++] = start;
     while (1) {
         read = resource_load_byte_range(c4handle, start, data,
                                         CHUNK_SIZE);
@@ -53,9 +55,10 @@ void build_index(void) {
     }
  no_more_chunks:
     total_defs = (i-1);
+    current_def = 0;
 }
 
-void update_call(uint16_t which) {
+void update_call(uint16_t which, unsigned short show_def) {
     static uint8_t data[MAX_DEF_LENGTH+1];
     uint32_t start = def_index[which];
     uint32_t end = def_index[which+1] - 1;
@@ -71,6 +74,7 @@ void update_call(uint16_t which) {
     }
     if (*def == '\t') { *def++ = 0; }
     text_layer_set_text(&c4call_layer, (char*)data);
+    if (!show_def) { *def = 0; } // hide definition
     text_layer_set_text(&c4def_layer, (char*)def);
 }
 
@@ -107,8 +111,9 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_font(&text_date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
   text_layer_set_text_alignment(&text_date_layer, GTextAlignmentCenter);
 
-  layer_set_frame(&text_time_layer.layer, GRect(7, 99, 144-7, 168-99));
+  layer_set_frame(&text_time_layer.layer, GRect(0, 99, 144, 168-99));
   text_layer_set_font(&text_time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_SUBSET_49)));
+  text_layer_set_text_alignment(&text_time_layer, GTextAlignmentCenter);
 
   layer_set_frame(&c4call_layer.layer, GRect(0, 0, 144, 18));
   text_layer_set_font(&c4def_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_BOLD_14)));
@@ -124,11 +129,7 @@ void handle_init(AppContextRef ctx) {
 
   // build index of definitions
   build_index();
-
-  text_layer_set_text(&c4call_layer, "tag the star:");
-  text_layer_set_text(&c4def_layer,
-                      "1/2 reverse swap around, counter rotate the diamond N/4 (default 2), drop in (gives 1/2 tag)");
-
+  text_layer_set_text(&c4call_layer, "C4 Calls");
 }
 
 
@@ -163,18 +164,33 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   }
 
   text_layer_set_text(&text_time_layer, time_text);
-
-  update_call(t->tick_time->tm_min % total_defs);
 }
 
+static void handle_second_tick(AppContextRef ctx, PebbleTickEvent *t) {
+    static unsigned short first = 1;
+    int sec = t->tick_time->tm_sec;
+    unsigned short show_def = 1;
+    if ((sec % 5) != 0 && !first) { return; }
+    if ((sec % 10) == 0) {
+        current_def++;
+        if (current_def >= total_defs) { current_def = 0; }
+        show_def = 0;
+    }
+    update_call(current_def, show_def);
+
+    if (sec==0 || first) {
+        handle_minute_tick(ctx, t);
+    }
+    first = 0;
+}
 
 void pbl_main(void *params) {
   PebbleAppHandlers handlers = {
     .init_handler = &handle_init,
 
     .tick_info = {
-      .tick_handler = &handle_minute_tick,
-      .tick_units = MINUTE_UNIT
+      .tick_handler = &handle_second_tick,
+      .tick_units = SECOND_UNIT
     }
 
   };
