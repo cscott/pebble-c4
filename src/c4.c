@@ -16,6 +16,8 @@ static TextLayer *s_c4def_layer;
 
 static Layer *s_line_layer;
 
+static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed);
+
 static uint16_t lfsr = 0xAACEu;
 void seed_random(void) {
   time_t t = time(NULL);
@@ -117,6 +119,9 @@ static void line_layer_update_callback(Layer *me, GContext* ctx) {
 }
 
 static void main_window_load(Window *window) {
+  time_t t = time(NULL);
+  struct tm * tm = localtime(&t);
+
   static TextLayer **layers[4] = {
     &s_date_layer, &s_time_layer, &s_c4call_layer, &s_c4def_layer
   };
@@ -153,6 +158,13 @@ static void main_window_load(Window *window) {
 
   // build index of definitions
   build_index();
+
+  // Register with TickTimerService
+  tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
+
+  // Make sure the time is displayed from the start
+  tm->tm_sec -= tm->tm_sec % 5;
+  handle_second_tick(tm, ~0);
 }
 
 static void main_window_unload(Window *window) {
@@ -161,6 +173,8 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_c4call_layer);
   text_layer_destroy(s_c4def_layer);
+  // unsubscribe to timer service
+  tick_timer_service_unsubscribe();
 }
 
 static void handle_day_tick(struct tm *tick_time, TimeUnits units_changed) {
@@ -198,9 +212,6 @@ static void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void init() {
-  time_t t = time(NULL);
-  struct tm * tm = localtime(&t);
-
   // Create main Window element and assign to pointer
   s_main_window = window_create();
 
@@ -212,13 +223,6 @@ static void init() {
 
   // Show the Window on the watch, with animated=true
   window_stack_push(s_main_window, true /* Animated */);
-
-  // Register with TickTimerService
-  tick_timer_service_subscribe(SECOND_UNIT, handle_second_tick);
-
-  // Make sure the time is displayed from the start
-  tm->tm_sec -= tm->tm_sec % 5;
-  handle_second_tick(tm, ~0);
 }
 
 static void deinit() {
