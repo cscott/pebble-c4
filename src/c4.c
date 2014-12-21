@@ -123,7 +123,7 @@ static void main_window_load(Window *window) {
   unsigned i;
 
   window_set_background_color(window, GColorBlack);
-  
+
   // Create TextLayers
   s_date_layer = text_layer_create(GRect(0, 168-24, 144, 24));
   text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
@@ -146,7 +146,7 @@ static void main_window_load(Window *window) {
     text_layer_set_background_color(tl, GColorClear);
     layer_add_child(window_get_root_layer(window), text_layer_get_layer(tl));
   }
-  
+
   s_line_layer = layer_create(GRect(8,97+9,144-8*2,2));
   layer_set_update_proc(s_line_layer, line_layer_update_callback);
   layer_add_child(window_get_root_layer(window), s_line_layer);

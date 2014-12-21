@@ -8,4 +8,4 @@ C4 level.
 A new call is displayed every 10 seconds.  After 5 seconds, the definition
 for the call appears.
 
-Copyright (c) 2013 C. Scott Ananian.  Licensed under the GPLv2.
+Copyright (c) 2013-2014 C. Scott Ananian.  Licensed under the GPLv2.
