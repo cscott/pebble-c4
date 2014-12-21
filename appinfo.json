@@ -1,0 +1,25 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "cscott@cscott.net",
+    "longName": "Square Dance Flash Cards (C4)",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "data/c4defs.tsv",
+                "name": "C4DEFS",
+                "type": "raw"
+            }
+        ]
+    },
+    "shortName": "C4",
+    "uuid": "22d30929-93ba-42ae-bbb1-04d1b3ab1eec",
+    "versionCode": 1,
+    "versionLabel": "1.2",
+    "watchapp": {
+        "watchface": true
+    }
+}
