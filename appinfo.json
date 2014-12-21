@@ -9,6 +9,12 @@
     "resources": {
         "media": [
             {
+                "file": "images/menu_icon_c4.png",
+                "menuIcon": true,
+                "name": "C4ICON",
+                "type": "png"
+            },
+            {
                 "file": "data/c4defs.tsv",
                 "name": "C4DEFS",
                 "type": "raw"
