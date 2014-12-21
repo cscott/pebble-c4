@@ -9,22 +9,22 @@
     "resources": {
         "media": [
             {
+                "file": "data/c4defs.tsv",
+                "name": "C4DEFS",
+                "type": "raw"
+            },
+            {
                 "file": "images/menu_icon_c4.png",
                 "menuIcon": true,
                 "name": "C4ICON",
                 "type": "png"
-            },
-            {
-                "file": "data/c4defs.tsv",
-                "name": "C4DEFS",
-                "type": "raw"
             }
         ]
     },
     "shortName": "C4",
     "uuid": "22d30929-93ba-42ae-bbb1-04d1b3ab1eec",
     "versionCode": 1,
-    "versionLabel": "1.2",
+    "versionLabel": "1.3",
     "watchapp": {
         "watchface": true
     }
