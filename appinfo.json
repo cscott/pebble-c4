@@ -1,31 +1,36 @@
 {
-    "appKeys": {},
-    "capabilities": [
-        ""
-    ],
-    "companyName": "cscott@cscott.net",
-    "longName": "Square Dance Flash Cards (C4)",
-    "projectType": "native",
-    "resources": {
-        "media": [
-            {
-                "file": "data/c4defs.tsv",
-                "name": "C4DEFS",
-                "type": "raw"
-            },
-            {
-                "file": "images/menu_icon_c4.png",
-                "menuIcon": true,
-                "name": "C4ICON",
-                "type": "png"
-            }
-        ]
-    },
-    "shortName": "C4",
-    "uuid": "22d30929-93ba-42ae-bbb1-04d1b3ab1eec",
-    "versionCode": 1,
-    "versionLabel": "1.3",
-    "watchapp": {
-        "watchface": true
-    }
+  "appKeys": {},
+  "capabilities": [
+    ""
+  ],
+  "companyName": "cscott@cscott.net",
+  "longName": "Square Dance Flash Cards (C4)",
+  "projectType": "native",
+  "resources": {
+    "media": [
+      {
+        "file": "data/c4defs.tsv",
+        "name": "C4DEFS",
+        "type": "raw"
+      },
+      {
+        "file": "images/menu_icon_c4.png",
+        "menuIcon": true,
+        "name": "C4ICON",
+        "type": "png"
+      }
+    ]
+  },
+  "shortName": "C4",
+  "uuid": "22d30929-93ba-42ae-bbb1-04d1b3ab1eec",
+  "versionCode": 1,
+  "versionLabel": "1.3",
+  "watchapp": {
+    "watchface": true
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
+  "sdkVersion": "3"
 }
